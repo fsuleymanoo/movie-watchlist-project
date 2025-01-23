@@ -1,6 +1,7 @@
 import MovieForm from './components/MovieForm';
 import Navbar from './components/Navbar';
 import { useState } from 'react';
+import MovieList from './components/Movielist';
 
 function App() {
   const [movies, setMovies] = useState([
