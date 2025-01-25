@@ -1,47 +1,74 @@
-import { useState } from 'react';
+import { useEffect, useState } from "react";
+import { isValidTitle, isValidRate } from "../utils.js";
 
-function MovieForm({addMovie}) {
-  const [title, setTitle] = useState('');
-  const [rate, setRate] = useState('');
+function MovieForm({ addMovie, editingMovie, updateMovie }) {
+  const [title, setTitle] = useState("");
+  const [rate, setRate] = useState("");
+
+  const [validTitle, setValidTitle] = useState(true);
+  const [validRate, setValidRate] = useState(true);
+
+  useEffect(() => {
+    if (editingMovie) {
+      setTitle(editingMovie.title);
+      setRate(editingMovie.rate);
+      setValidTitle(true);
+      setValidRate(true);
+    }
+  }, [editingMovie]);
 
   const handleTitleInput = (e) => {
-    setTitle(e.target.value);
+    const value = e.target.value;
+    setTitle(value);
+    setValidTitle(isValidTitle(value));
   };
 
   const handleRateInput = (e) => {
-    setRate(e.target.value);
+    const value = e.target.value;
+    setRate(value);
+    setValidRate(isValidRate(value));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const newMovie = {
-        id: Date.now(),
-        title: title,
-        rate: rate
+    if (!isValidRate(rate) || !isValidTitle(title)) {
+      return;
     }
 
-    addMovie(newMovie);
+    const movieData = {
+      id: editingMovie ? editingMovie.id : Date.now(),
+      title: title,
+      rate: rate,
+    };
+    if (editingMovie) {
+      updateMovie(movieData);
+    } else {
+      addMovie(movieData);
+    }
 
-
-    console.log('New Movie Captured: ', newMovie);
+    console.log("New Movie Captured: ", movieData);
 
     // Reset the state
-    setTitle('');
-    setRate('');
-  }
+    setTitle("");
+    setRate("");
+    setValidRate(false);
+    setValidTitle(false);
+  };
+
+  const isFormValid = validTitle && validRate;
 
   return (
-    <form 
-    onSubmit={handleSubmit}
-    className="z-1 p-3 mt-5 border border-2 rounded-2 d-xl-flex gap-1 col-lg-4 col-md-6 col-11 neon-shadow"
+    <form
+      onSubmit={handleSubmit}
+      className="z-1 p-3 mt-5 border border-2 rounded-2 d-xl-flex gap-1 col-lg-4 col-md-6 col-11 neon-shadow"
     >
       <div className="col-xl-7 col-12 mb-1">
         <div className="form-floating">
           <input
             onChange={handleTitleInput}
             type="text"
-            className="form-control"
+            className={`form-control ${validTitle ? "" : "is-invalid"}`}
             id="movie-title"
             placeholder="Movie Title"
             value={title}
@@ -54,7 +81,7 @@ function MovieForm({addMovie}) {
           <input
             onChange={handleRateInput}
             type="number"
-            className="form-control"
+            className={`form-control ${validRate ? "" : "is-invalid"}`}
             id="movie-rate"
             placeholder="Movie Title"
             value={rate}
@@ -62,8 +89,13 @@ function MovieForm({addMovie}) {
           <label htmlFor="movie-rate">Rate(1-10)</label>
         </div>
       </div>
-      <button type="submit" className="btn btn-warning btn-sm col-xl-2 col-12">
-        Add
+      <button
+        id="submit-btn"
+        type="submit"
+        className="btn btn-warning btn-sm col-xl-2 col-12"
+        disabled={!isFormValid}
+      >
+        {editingMovie ? "Update" : "Add"}
       </button>
     </form>
   );

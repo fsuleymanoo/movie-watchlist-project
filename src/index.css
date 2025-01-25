@@ -2,15 +2,25 @@
   background-color: #f9f6ee;
 }
 
-
 .custom-badge-position {
   top: 0.3rem;
   left: 0.7rem;
   min-width: 2.2rem;
-  max-width: 2.2rem
+  max-width: 2.2rem;
 }
 
-
 .neon-shadow {
-  box-shadow: 0 0 2rem 0.1rem rgba(147, 147, 255, 0.542);
+  box-shadow: 0 0 3rem 0.1rem rgba(147, 147, 255, 0.464);
+}
+
+#submit-btn {
+  height: 3.5rem;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  margin: 0;
 }
